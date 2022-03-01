@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang='en'>
+    
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-control" content="public">
+    <meta name="viewport" content="width=device-width,initial-scale=0.9">
+    <meta name="description" content="Token Navigation Translator">
+    <meta name="theme-color" content="#efefef">
+
+    <title>Random Strum Pattern</title><link rel="shortcut icon" href="#" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Roboto&display=swap'>
+    <link rel='stylesheet' type='text/css' href='style.css?v=0'>
+</head>
+
+<body style='text-align: center; margin-bottom: 20px; background-color: #f4f4f4;'>
+
+    <div id="settings" style="text-align: left; width: 400px; margin-left: auto; margin-right: auto; margin-top: 50px">    
+        <h2>Random Strum Pattern Generator</h2>
+        
+        <label for="fix_first">Fix first downstrum</label>
+        <input id="fix_first" name="fix_first" type="checkbox" checked>
+        <br>
+        <label id="beats_in_bar_label" for="beats_in_bar">Beats to a bar</label>
+        <input type="range" min="2" max="8" value="4" class="slider" id="beats_in_bar">
+        <br>
+        <label id="total_strums_label" for="total_strums">Total strums</label>
+        <input type="range" min="1" max="8" value="4" class="slider" id="total_strums">
+        
+        <div id='area_output' readonly>sdfsd</div>
+        
+        <input id="generate_button" value="Generate" type="button">
+    </div>
+
+
+    <a href="https://github.com/zouharvi/random-strum-pattern" style="position: absolute; left: 10px; bottom: 10px; color: black;">
+        Made by Vilém Zouhar (About & Code)
+    </a>
+
+    <script src='rsp-web.js'></script>
+</body>
+</html>

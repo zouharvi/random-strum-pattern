@@ -1,0 +1,13 @@
+{ 
+    "compilerOptions": { 
+        "target": "ES2020", 
+        "outDir": "./web/", 
+        "noImplicitAny": true, 
+        "sourceMap": true, 
+        "strict": true, 
+        "resolveJsonModule": true, 
+        "esModuleInterop": true, 
+        "moduleResolution": "node" 
+    },
+    "include": ["src/**/*", "src/*"],
+} 
