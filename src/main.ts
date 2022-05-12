@@ -39,9 +39,9 @@ function generate() {
     for (let i = 0; i < bib; i++) {
         if (i != 0 || !fix_first) {
             // don't add if we're fixing the first downstream
-            pattern_all.push([2*i, "D"]);
+            pattern_all.push([2*i, "↓"]);
         }
-        pattern_all.push([2*i+1, "U"]);
+        pattern_all.push([2*i+1, "↑"]);
     }
 
     shuffle(pattern_all);
@@ -52,7 +52,7 @@ function generate() {
     }
 
     if (fix_first) {
-        pattern_final[0] = "D";
+        pattern_final[0] = "↓";
     }
 
     $("#area_output").html(pattern_sig.join("") + "<br>" + pattern_final.join(""));
