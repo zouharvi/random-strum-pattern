@@ -2,6 +2,7 @@
 
 Random guitar strum pattern generator for practice.
 Check it out: [vilda.net/s/rsp](https://vilda.net/s/rsp/).
+It should look as follows: ![image](https://user-images.githubusercontent.com/7661193/168054877-45fb21e7-5929-403b-be14-66df3dd7806c.png)
 
 It also contains an initial Python version `random_strum_pattern.py` after which I decided I could make it a small website with a bunch of buttons.
 
