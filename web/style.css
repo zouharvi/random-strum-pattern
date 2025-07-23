@@ -23,14 +23,14 @@
 }
 
 
-#total_strums, #beats_in_bar {
+#total_strums, #beats_in_bar, #whitespace_fill {
     position: relative;
     top: 8px;
     width: 200px;
     display: inline-block;
 }
 
-#total_strums_label, #beats_in_bar_label {
+#total_strums_label, #beats_in_bar_label, #whitespace_fill_label {
     width: 180px;
     display: inline-block;
 }

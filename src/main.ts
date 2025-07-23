@@ -11,6 +11,7 @@ $("#generate_button").on("click", generate);
 $("#beats_in_bar").on("input", generate);
 $("#total_strums").on("input", generate);
 $("#fix_first").on("input", generate);
+$("#whitespace_fill").on("input", generate);
 
 function generate() {
     let bib = $("#beats_in_bar").val() as number;
@@ -45,7 +46,8 @@ function generate() {
     }
 
     shuffle(pattern_all);
-    let pattern_final : string[] = Array(bib*2).fill("&nbsp;");
+    let whitespaceChar = $("#whitespace_fill").val() || "&nbsp;";
+    let pattern_final : string[] = Array(bib*2).fill(whitespaceChar);
     for (let i = 0; i < tts; i++) {
         console.log(pattern_all[i]);
         pattern_final[pattern_all[i][0]] = pattern_all[i][1];
