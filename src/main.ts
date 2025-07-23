@@ -106,12 +106,13 @@ function generate() {
     if (fix_first) {
         pattern_final[0] = "↓";
     }
-
-    const patternHtml = pattern_final.map((char, index) => {
+    
+    const topLineHtml = pattern_sig.map(char => `<span>${char}</span>`).join("");
+    const bottomLineHtml = pattern_final.map((char, index) => {
         return `<span id="beat-${index}">${char}</span>`;
     }).join("");
 
-    $("#area_output").html(pattern_sig.join("") + "<br>" + patternHtml);
+    $("#area_output").html(topLineHtml + "<br>" + bottomLineHtml);
 }
 
 generate();
