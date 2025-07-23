@@ -34,3 +34,9 @@
     width: 180px;
     display: inline-block;
 }
+
+.highlight {
+    background-color: #aae0f0;
+    border-radius: 3px;
+    display: inline-block;
+}
