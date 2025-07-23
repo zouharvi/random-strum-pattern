@@ -1,9 +1,40 @@
+let audioCtx: AudioContext | null = null;
 let metronomeTimerId: number | null = null;
 let isPlaying = false;
 let currentBeat = 0;
 
+function initAudio() {
+    if (audioCtx === null) {
+        audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+}
+
+function playSound(isStrongBeat: boolean) {
+    if (audioCtx === null) return;
+
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    // Define frequências diferentes para a batida forte e as fracas
+    oscillator.type = 'sine';
+    oscillator.frequency.value = isStrongBeat ? 880.0 : 440.0; // Tom agudo (A5) vs. Tom normal (A4)
+
+    // Cria um "click" curto com duração de 50ms
+    const now = audioCtx.currentTime;
+    gainNode.gain.setValueAtTime(1, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+    oscillator.start(now);
+    oscillator.stop(now + 0.05);
+}
+
 function playMetronome() {
     if (isPlaying) return;
+
+    initAudio();
 
     const bpmValue = $("#bpm").val() || '120';
     const bpm = parseInt(String(bpmValue), 10);
@@ -22,6 +53,10 @@ function playMetronome() {
         
         $("#area_output span").removeClass("highlight");
         $(`#beat-${currentBeat}`).addClass("highlight");
+
+        if (currentBeat % 2 === 0) {
+            playSound(currentBeat === 0);
+        }
 
         currentBeat = (currentBeat + 1) % totalBeats;
     }
@@ -106,7 +141,7 @@ function generate() {
     if (fix_first) {
         pattern_final[0] = "↓";
     }
-    
+
     const topLineHtml = pattern_sig.map(char => `<span>${char}</span>`).join("");
     const bottomLineHtml = pattern_final.map((char, index) => {
         return `<span id="beat-${index}">${char}</span>`;
