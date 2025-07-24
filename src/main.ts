@@ -74,6 +74,22 @@ function playHiHatSound() {
     whiteNoise.stop(now + 0.08);
 }
 
+function tick() {
+    const subdivision = parseInt($("#subdivision").val() as string, 10);
+    const totalSlots = ($("#beats_in_bar").val() as number) * subdivision;
+    
+    $("#area_output span").removeClass("highlight");
+    $(`#beat-${currentBeat}`).addClass("highlight");
+
+    if (currentBeat % subdivision === 0) {
+        playSound(currentBeat === 0);
+    } else {
+        playHiHatSound();
+    }
+
+    currentBeat = (currentBeat + 1) % totalSlots;
+}
+
 function playMetronome() {
     if (isPlaying) return;
     initAudio();
@@ -91,21 +107,6 @@ function playMetronome() {
     currentBeat = 0;
 
     const interval = (60 * 1000) / (bpm * subdivision);
-
-    function tick() {
-        const totalSlots = ($("#beats_in_bar").val() as number) * subdivision;
-        
-        $("#area_output span").removeClass("highlight");
-        $(`#beat-${currentBeat}`).addClass("highlight");
-
-        if (currentBeat % subdivision === 0) {
-            playSound(currentBeat === 0);
-        } else {
-            playHiHatSound();
-        }
-
-        currentBeat = (currentBeat + 1) % totalSlots;
-    }
 
     tick();
     metronomeTimerId = window.setInterval(tick, interval);
@@ -142,6 +143,30 @@ $("#whitespace_fill").on("input", generate);
 $("#play_button").on("click", playMetronome);
 $("#stop_button").on("click", stopMetronome);
 $(window).on('resize', adjustFontSize);
+
+$('#bpm').on('input', function() {
+    // Só faz algo se o metrônomo já estiver tocando
+    if (isPlaying && metronomeTimerId !== null) {
+        
+        // 1. Para o timer atual
+        window.clearInterval(metronomeTimerId);
+
+        // 2. Lê o novo valor de BPM e recalcula o intervalo
+        const bpmValue = $("#bpm").val() || '120';
+        const bpm = parseInt(String(bpmValue), 10);
+        const subdivision = parseInt($("#subdivision").val() as string, 10);
+
+        // Se o valor for inválido, apenas para de atualizar.
+        if (isNaN(bpm) || bpm <= 0) {
+            return;
+        }
+
+        const newInterval = (60 * 1000) / (bpm * subdivision);
+
+        // 3. Inicia um novo timer com o novo intervalo, continuando de onde parou
+        metronomeTimerId = window.setInterval(tick, newInterval);
+    }
+});
 
 function generate() {
     stopMetronome();
