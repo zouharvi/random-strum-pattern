@@ -1,36 +1,59 @@
 * {
-    font-family: Roboto, Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+}
+
+#settings, #metronome {
+    max-width: 500px;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+#settings {
+    margin-top: 50px;
+}
+
+#metronome {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #ccc;
 }
 
 #area_output {
     font-family: 'Courier New', Courier, monospace;
-    margin-top: 30px;
+    margin-top: 20px;
     background-color: white;
     border-radius: 4px;
     border: 1px dotted black;
-    font-size: xx-large;
-    width: 350px;
-    height: 90px;
-    margin-left: auto;
-    margin-right: auto;
+    font-size: 1.8em;
+    width: 100%;
+    min-height: 90px;
+    padding: 15px 5px;
     text-align: center;
+    overflow-x: hidden;
 }
 
 #generate_button {
-    font-size: x-large;
+    font-size: 1.2em;
     margin-top: 20px;
     width: 100%;
 }
 
-
-#total_strums, #beats_in_bar {
-    position: relative;
-    top: 8px;
-    width: 200px;
+#total_strums, #beats_in_bar, #whitespace_fill, #subdivision {
+    width: calc(100% - 190px);
     display: inline-block;
+    vertical-align: middle;
 }
 
-#total_strums_label, #beats_in_bar_label {
+#total_strums_label, #beats_in_bar_label, #whitespace_fill_label, #subdivision_label {
     width: 180px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.highlight {
+    background-color: #aae0f0;
+    border-radius: 3px;
     display: inline-block;
 }
