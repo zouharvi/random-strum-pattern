@@ -140,8 +140,9 @@ $("#subdivision").on("input", generate);
 $("#total_strums").on("input", generate);
 $("#fix_first").on("input", generate);
 $("#whitespace_fill").on("input", generate);
-$("#play_button").on("click", playMetronome);
-$("#stop_button").on("click", stopMetronome);
+$("#play_button").on("click", () => { playMetronome(); $("#play_button").hide(); $("#stop_button").show(); });
+$("#stop_button").on("click", () => { stopMetronome(); $("#play_button").show(); $("#stop_button").hide(); });
+$("#stop_button").hide();
 $(window).on('resize', adjustFontSize);
 
 $('#bpm').on('input', function() {

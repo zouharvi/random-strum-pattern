@@ -22,7 +22,7 @@
         <h2>Random Strum Pattern Generator</h2>
         
         <label for="fix_first">Fix first downstrum</label>
-        <input id="fix_first" name="fix_first" type="checkbox" checked>
+        <input id="fix_first" name="fix_first" type="checkbox" checked style="margin-left: 45px;">
         <br>
         <label id="beats_in_bar_label" for="beats_in_bar">Beats to a bar</label>
         <input type="range" min="2" max="8" value="4" class="slider" id="beats_in_bar">
@@ -39,21 +39,22 @@
         <br>
         <label id="whitespace_fill_label" for="whitespace_fill">Whitespace character</label>
         <input type="text" maxlength="1" id="whitespace_fill" value=".">
-        <div id='area_output' readonly>sdfsd</div>
+        <br>
+        <hr>
+        <label for="bpm">Metronome BPM:</label>
+        <input type="number" id="bpm" value="120" style="margin-left: 55px; width: 60px;">
+        <button id="play_button">Play</button>
+        <button id="stop_button">Stop</button>
+        <br>
+
+        <div id='area_output' readonly>loading</div>
         
         <input id="generate_button" value="Generate" type="button">
     </div>
 
-    <div id="metronome" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc;">
-        <h2>Metronome</h2>
-        <label for="bpm">BPM:</label>
-        <input type="number" id="bpm" value="120" style="width: 60px;">
-        <button id="play_button">Play</button>
-        <button id="stop_button">Stop</button>
-    </div>
 
     <a href="https://github.com/zouharvi/random-strum-pattern" style="position: absolute; left: 10px; bottom: 10px; color: black;">
-        Made by Vilém Zouhar (About & Code)
+        Made by Vilém Zouhar & others (About & Code)
     </a>
 
     <script src='rsp-web.js?v=1'></script>
