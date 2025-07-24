@@ -42,6 +42,38 @@ function playSound(isStrongBeat: boolean) {
     oscillator.stop(now + 0.05);
 }
 
+function playHiHatSound() {
+    if (audioCtx === null) return;
+
+    const gainNode = audioCtx.createGain();
+    const now = audioCtx.currentTime;
+
+    const bufferSize = audioCtx.sampleRate * 0.1;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = buffer.getChannelData(0);
+
+    for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+    }
+
+    const whiteNoise = audioCtx.createBufferSource();
+    whiteNoise.buffer = buffer;
+
+    const highPassFilter = audioCtx.createBiquadFilter();
+    highPassFilter.type = 'highpass';
+    highPassFilter.frequency.value = 7000;
+
+    whiteNoise.connect(highPassFilter);
+    highPassFilter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    gainNode.gain.setValueAtTime(1, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    whiteNoise.start(now);
+    whiteNoise.stop(now + 0.08);
+}
+
 function playMetronome() {
     if (isPlaying) return;
     initAudio();
@@ -68,6 +100,8 @@ function playMetronome() {
 
         if (currentBeat % subdivision === 0) {
             playSound(currentBeat === 0);
+        } else {
+            playHiHatSound();
         }
 
         currentBeat = (currentBeat + 1) % totalSlots;
