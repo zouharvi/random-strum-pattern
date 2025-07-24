@@ -3,6 +3,19 @@ let metronomeTimerId: number | null = null;
 let isPlaying = false;
 let currentBeat = 0;
 
+function adjustFontSize() {
+    const outputArea = $('#area_output');
+    outputArea.css('font-size', ''); 
+
+    const outputElement = outputArea[0];
+    let currentFontSize = parseFloat(window.getComputedStyle(outputElement).fontSize);
+    
+    while (outputElement.scrollWidth > outputElement.clientWidth && currentFontSize > 8) {
+        currentFontSize--;
+        outputArea.css('font-size', currentFontSize + 'px');
+    }
+}
+
 function initAudio() {
     if (audioCtx === null) {
         audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -18,11 +31,9 @@ function playSound(isStrongBeat: boolean) {
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
 
-    // Define frequências diferentes para a batida forte e as fracas
     oscillator.type = 'sine';
-    oscillator.frequency.value = isStrongBeat ? 880.0 : 440.0; // Tom agudo (A5) vs. Tom normal (A4)
+    oscillator.frequency.value = isStrongBeat ? 880.0 : 440.0; 
 
-    // Cria um "click" curto com duração de 50ms
     const now = audioCtx.currentTime;
     gainNode.gain.setValueAtTime(1, now);
     gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
@@ -33,11 +44,11 @@ function playSound(isStrongBeat: boolean) {
 
 function playMetronome() {
     if (isPlaying) return;
-
     initAudio();
 
     const bpmValue = $("#bpm").val() || '120';
     const bpm = parseInt(String(bpmValue), 10);
+    const subdivision = parseInt($("#subdivision").val() as string, 10);
 
     if (isNaN(bpm) || bpm <= 0) {
         alert("Please enter a valid BPM.");
@@ -47,18 +58,19 @@ function playMetronome() {
     isPlaying = true;
     currentBeat = 0;
 
-    const interval = (60 * 1000) / (bpm * 2);
+    const interval = (60 * 1000) / (bpm * subdivision);
+
     function tick() {
-        const totalBeats = ($("#beats_in_bar").val() as number) * 2;
+        const totalSlots = ($("#beats_in_bar").val() as number) * subdivision;
         
         $("#area_output span").removeClass("highlight");
         $(`#beat-${currentBeat}`).addClass("highlight");
 
-        if (currentBeat % 2 === 0) {
+        if (currentBeat % subdivision === 0) {
             playSound(currentBeat === 0);
         }
 
-        currentBeat = (currentBeat + 1) % totalBeats;
+        currentBeat = (currentBeat + 1) % totalSlots;
     }
 
     tick();
@@ -80,7 +92,6 @@ function stopMetronome() {
 }
 
 function shuffle(a: any[]) {
-    // taken from https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
     for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [a[i], a[j]] = [a[j], a[i]];
@@ -90,64 +101,69 @@ function shuffle(a: any[]) {
 
 $("#generate_button").on("click", generate);
 $("#beats_in_bar").on("input", generate);
+$("#subdivision").on("input", generate); 
 $("#total_strums").on("input", generate);
 $("#fix_first").on("input", generate);
 $("#whitespace_fill").on("input", generate);
 $("#play_button").on("click", playMetronome);
 $("#stop_button").on("click", stopMetronome);
+$(window).on('resize', adjustFontSize);
 
 function generate() {
     stopMetronome();
 
-    let bib = $("#beats_in_bar").val() as number;
+    const bib = $("#beats_in_bar").val() as number;
+    const subdivision = parseInt($("#subdivision").val() as string, 10);
     let tts = $("#total_strums").val() as number;
-    $("#total_strums").attr("max", 2 * bib);
-    if (tts > 2 * bib) {
-        $("#total_strums").val(2 * bib);
-        tts = 2 * bib;
+    
+    const totalSlots = bib * subdivision;
+    $("#total_strums").attr("max", totalSlots);
+    if (tts > totalSlots) {
+        $("#total_strums").val(totalSlots);
+        tts = totalSlots;
     }
 
     let fix_first = $("#fix_first").is(":checked") as boolean;
     $("#beats_in_bar_label").html("Beats to a bar (" + bib.toString() + ")");
     $("#total_strums_label").html("Total strums (" + tts.toString() + ")");
 
-    if (fix_first) {
-        tts -= 1;
-    }
-
+    if (fix_first) { tts -= 1; }
+    
+    const signatureSymbols = { 2: ['+'], 3: ['t', 'a'], 4: ['e', '+', 'a'] };
     let pattern_sig: string[] = [];
     for (let i = 0; i < bib; i++) {
         pattern_sig.push((i + 1).toString());
-        pattern_sig.push("+");
+        const key = subdivision as keyof typeof signatureSymbols;
+        if (signatureSymbols[key]) { pattern_sig.push(...signatureSymbols[key]); }
     }
 
     let pattern_all: any[] = [];
-    for (let i = 0; i < bib; i++) {
-        if (i != 0 || !fix_first) {
-            pattern_all.push([2 * i, "↓"]);
-        }
-        pattern_all.push([2 * i + 1, "↑"]);
+    for (let i = 0; i < totalSlots; i++) {
+        if (i === 0 && fix_first) continue;
+        const direction = (i % 2 === 0) ? "↓" : "↑";
+        pattern_all.push([i, direction]);
     }
 
     shuffle(pattern_all);
     
-    let whitespaceChar = ($("#whitespace_fill").val() as string) || "&nbsp;";
-    let pattern_final: string[] = Array(bib * 2).fill(whitespaceChar);
+    let whitespaceChar = ($("#whitespace_fill").val() as string) || "·";
+    let pattern_final: string[] = Array(totalSlots).fill(whitespaceChar);
     
     for (let i = 0; i < tts; i++) {
         pattern_final[pattern_all[i][0]] = pattern_all[i][1];
     }
 
-    if (fix_first) {
-        pattern_final[0] = "↓";
-    }
-
+    if (fix_first) { pattern_final[0] = "↓"; }
+    
     const topLineHtml = pattern_sig.map(char => `<span>${char}</span>`).join("");
+    
     const bottomLineHtml = pattern_final.map((char, index) => {
         return `<span id="beat-${index}">${char}</span>`;
     }).join("");
 
     $("#area_output").html(topLineHtml + "<br>" + bottomLineHtml);
+    
+    adjustFontSize();
 }
 
 generate();
